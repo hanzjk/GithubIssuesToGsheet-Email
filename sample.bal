@@ -2,6 +2,7 @@ import ballerina/http;
 import ballerina/log;
 import ballerinax/googleapis.sheets as sheets;
 import ballerinax/trigger.github;
+import wso2/choreo.sendemail as email;
 
 // Types
 type OAuth2RefreshTokenGrantConfig record {
@@ -21,6 +22,8 @@ final string[] & readonly columnNames = [
     "Issue Creator",
     "Issue Created At"
 ];
+//Email 
+configurable string recipientAddress = ?;
 
 // Github configuration parameters
 configurable github:ListenerConfig gitHubListenerConfig = ?;
@@ -53,6 +56,10 @@ service github:IssuesService on gitHubListener {
       (int|string|decimal)[] values = [payload.issue.html_url, payload.issue.number, payload.issue.title, payload.issue.user.login, payload.issue.created_at];
       check spreadsheetClient->appendRowToSheet(spreadsheetId, worksheetName, values);
       log:printInfo("New GiHub issue assignment record appended to GSheet successfully!");
+
+      email:Client emailClient = check new ();
+      string sendEmailResponse = check emailClient->sendEmail(recipientAddress,"New Issue Created", "Issue Title: " + payload.issue.title + " Issue Body: " + payload.issue.html_url);
+      log:printInfo("Email sent to " + recipientAddress + " with response: " + sendEmailResponse);
     }
     remote function onOpened(github:IssuesEvent payload ) returns error? {
       return;
