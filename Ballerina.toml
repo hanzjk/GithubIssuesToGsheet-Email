@@ -1,0 +1,12 @@
+[build-options]
+  observabilityIncluded = true
+
+[package]
+  distribution = "2201.3.1"
+  export = ["github_issue_to_gsheet_al"]
+  icon = "docs/icon.png"
+  keywords = ["Kind/Sample","Type/Webhook","Category/Integration","Internal/http"]
+  name = "github_issue_to_gsheet_al"
+  org = "hwjsk"
+  version = "3.1.0"
+
